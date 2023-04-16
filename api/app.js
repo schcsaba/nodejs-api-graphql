@@ -74,6 +74,8 @@ app.use(
             post: args => graphqlResolver.post(args, req),
             updatePost: args => graphqlResolver.updatePost(args, req),
             deletePost: args => graphqlResolver.deletePost(args, req),
+            user: args => graphqlResolver.user(args, req),
+            updateStatus: args => graphqlResolver.updateStatus(args, req)
         },
         formatError(err) {
             if (!err.originalError) {
