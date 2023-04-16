@@ -59,7 +59,7 @@ class App extends Component {
   loginHandler = (event, authData) => {
     event.preventDefault();
     const graphqlQuery = {
-      query: `
+      query: `#graphql
         {
           login(email: "${authData.email}", password: "${authData.password}") {
             token
@@ -118,7 +118,7 @@ class App extends Component {
     event.preventDefault();
     this.setState({ authLoading: true });
     const graphqlQuery = {
-      query: `
+      query: `#graphql
         mutation {
           createUser(userInput: {email: "${authData.signupForm.email.value}", name: "${authData.signupForm.name.value}", password: "${authData.signupForm.password.value}"}) {
             _id

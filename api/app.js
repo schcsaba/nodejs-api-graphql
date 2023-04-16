@@ -7,6 +7,7 @@ const multer = require('multer');
 const { createHandler } = require('graphql-http/lib/use/express');
 const graphqlSchema = require('./graphql/schema');
 const graphqlResolver = require('./graphql/resolvers');
+const auth = require('./middleware/auth');
 
 const MONGODB_URI = `mongodb+srv://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@nodejs01-mongo.eg2g7ue.mongodb.net/messages?retryWrites=true&w=majority`;
 
@@ -45,12 +46,18 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use(auth);
+
 app.use(
     '/graphql',
-    createHandler({
+    (req, res) => createHandler({
         schema: graphqlSchema,
-        rootValue: graphqlResolver,
-        graphiql: true,
+        rootValue: {
+            createUser: args => graphqlResolver.createUser(args, req),
+            login: args => graphqlResolver.login(args, req),
+            createPost: args => graphqlResolver.createPost(args, req),
+            posts: args => graphqlResolver.posts(args, req),
+        },
         formatError(err) {
             if (!err.originalError) {
                 return err;
@@ -60,7 +67,7 @@ app.use(
             const code = err.originalError.code || 500;
             return { message: message, status: code, data: data };
         }
-    })
+    })(req, res)
 );
 
 app.use((error, req, res, next) => {
